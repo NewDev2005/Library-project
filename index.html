@@ -8,6 +8,33 @@
     <script src="script.js" defer></script>
 </head>
 <body>
-    <h1>Library project</h1>
+    <div id="container">
+        <div id="first-child">
+            <h1>Odin's Library!!</h1>
+        </div>
+        <div>
+            <button command="show-modal" commandfor="book-dialog">New Book</button>
+            <dialog id="book-dialog">
+                <form action="" method="post" id="book-info">
+                   <div>
+                    <label for="title">Title</label>
+                    <input type="text" id="title" />
+                   </div>
+                    <div>
+                        <label for="author">Author</label>
+                        <input type="text" id="author" />
+                    </div>
+                    <div>
+                        <label for="pages">Total pages</label>
+                        <input type="number" id="pages" />
+                    </div>
+                    <div>
+                        <input type="submit" value="submit" id="submit" />
+                    </div>
+                </form>
+                <button commandfor="book-dialog" command="close">close</button>
+            </dialog>
+        </div>
+    </div>
 </body>
 </html>
