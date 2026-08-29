@@ -24,6 +24,10 @@ function displayBook(){
             return;
         }
         const div = document.createElement("div");
+        const deleteBtn = document.createElement("button");
+        deleteBtn.innerHTML= "Delete";
+        deleteBtn.setAttribute("id", "remove-btn");
+        deleteBtn.setAttribute("data-uniqueId", book.id);
         const titlePara = document.createElement("p");
         const authorPara = document.createElement("p")
         const pagesPara = document.createElement("p")
@@ -32,6 +36,7 @@ function displayBook(){
         div.appendChild(titlePara);
         div.appendChild(authorPara);
         div.appendChild(pagesPara);
+        div.appendChild(deleteBtn);
         titlePara.innerHTML = "<b>Title</b>: " + `${book.title}`;
         authorPara.innerHTML = "<b>Author</b>: " + `${book.author}`;
         pagesPara.innerHTML = "<b>Pages</b>: " + `${book.pages}`;
@@ -50,18 +55,59 @@ function addBook(){
     btn.addEventListener("click", (e) => {
         e.preventDefault();
         createBook(title.value, author.value, pages.value);
+        enableDeleteBtnForBook();
         dialog.close()
     });
 }
 
 
-function removeBook(){
+function enableDeleteBtnForBook(){
+    const deleteBtns = document.querySelectorAll("#remove-btn");
+    if (deleteBtns.length > 0){
+        deleteBtns.forEach((deleteBtn) => {
+            deleteBtn.addEventListener("click", () => {
+                const container = document.querySelector("#container");
+                const parentDiv = deleteBtn.parentNode;
+                id = deleteBtn.dataset.uniqueID;
+                container.removeChild(parentDiv);
+                // updateCatalogue(id);
+            });
+        });
+    }
+   
+}
 
+function RemoveDeletedBookFromArr(uniqueID){
+    arr = []
+   for (let i = 0; i < myBooks.length; i++){
+        book = myBooks[i];
+        if (book.id == uniqueID){
+            continue;
+        } 
+        arr.push(book);
+   }
+   return arr;
+}
+
+function removeAllBooks(){
+    while (myBooks.length === 0){
+        myBooks.pop();
+    }
+}
+
+function updateCatalogue(uniqueID){
+    arr = RemoveDeletedBookFromArr(uniqueID);
+    removeAllBooks();
+    for (let i = 0; i < arr.length; i++){
+        myBooks.push(arr[i]);
+    }
 }
 
 createBook("The ignited minds", "APJ abdul kalam", 259, "read");
 createBook("The song of ice and fire", "George martin", 999, " not read");
-
+enableDeleteBtnForBook();
 
 addBook();
+
+
 
