@@ -31,7 +31,9 @@ function displayBook(){
             return;
         }
         const div = document.createElement("div");
+        const firstChild = document.querySelector("#first-child");
         const deleteBtn = document.createElement("button");
+        const totalBookpara = document.createElement("p")
         const readToggleBtn = document.createElement("button");
         readToggleBtn.innerHTML = book.status
         deleteBtn.innerHTML= "Delete";
@@ -45,12 +47,14 @@ function displayBook(){
         const authorPara = document.createElement("p");
         const pagesPara = document.createElement("p");
         div.setAttribute("class", "book");
+        firstChild.appendChild(totalBookpara);
         container.appendChild(div);
         div.appendChild(titlePara);
         div.appendChild(authorPara);
         div.appendChild(pagesPara);
         div.appendChild(deleteBtn);
         div.appendChild(readToggleBtn);
+
         titlePara.innerHTML = "<b>Title</b>: " + `${book.title}`;
         authorPara.innerHTML = "<b>Author</b>: " + `${book.author}`;
         pagesPara.innerHTML = "<b>Pages</b>: " + `${book.pages}`;
@@ -69,6 +73,7 @@ function addBook(){
     btn.addEventListener("click", (e) => {
         e.preventDefault();
         createBook(title.value, author.value, pages.value);
+        displayTotalBookCount();
         enableDeleteBtnForBook();
         toggleReadStatus();
         dialog.close();
@@ -86,6 +91,7 @@ function enableDeleteBtnForBook(){
                     id = deleteBtn.dataset.uniqueId;
                     container.removeChild(parentDiv);
                     updateCatalogue(id);
+                    displayTotalBookCount();
                 });
                 deleteBtn.dataset.eventListener = "true";
             }
@@ -113,6 +119,12 @@ function toggleReadStatus(){
             }
         });
     }
+}
+
+
+function displayTotalBookCount(){
+    const para = document.querySelector("#first-child > p:first-of-type");
+    para.innerHTML = "<b>Total Books: </b>" + `${myBooks.length}`;
 }
 
 
@@ -154,5 +166,6 @@ createBook("Rails for Dummies", "Ser DHH", 300);
 createBook("Bjorn the ironside", "Odin-All-father", 69);
 enableDeleteBtnForBook();
 toggleReadStatus();
+displayTotalBookCount();
 
 addBook();
