@@ -27,7 +27,8 @@ function displayBook(){
         const deleteBtn = document.createElement("button");
         deleteBtn.innerHTML= "Delete";
         deleteBtn.setAttribute("id", "remove-btn");
-        deleteBtn.setAttribute("data-uniqueId", book.id);
+        deleteBtn.setAttribute("data-unique-id", book.id);
+        deleteBtn.setAttribute("data-event-listener", "false");
         const titlePara = document.createElement("p");
         const authorPara = document.createElement("p")
         const pagesPara = document.createElement("p")
@@ -60,43 +61,45 @@ function addBook(){
     });
 }
 
-
 function enableDeleteBtnForBook(){
     const deleteBtns = document.querySelectorAll("#remove-btn");
     if (deleteBtns.length > 0){
         deleteBtns.forEach((deleteBtn) => {
-            deleteBtn.addEventListener("click", () => {
-                const container = document.querySelector("#container");
-                const parentDiv = deleteBtn.parentNode;
-                id = deleteBtn.dataset.uniqueID;
-                container.removeChild(parentDiv);
-                // updateCatalogue(id);
-            });
+            if (deleteBtn.dataset.eventListener === "false"){
+                deleteBtn.addEventListener("click", () => {
+                    const container = document.querySelector("#container");
+                    const parentDiv = deleteBtn.parentNode;
+                    id = deleteBtn.dataset.uniqueId;
+                    container.removeChild(parentDiv);
+                    updateCatalogue(id);
+                });
+                deleteBtn.dataset.eventListener = "true";
+            }
         });
     }
    
 }
 
-function RemoveDeletedBookFromArr(uniqueID){
+function RemoveDeletedBookFromArr(uniqueId){
     arr = []
    for (let i = 0; i < myBooks.length; i++){
         book = myBooks[i];
-        if (book.id == uniqueID){
-            continue;
+        if (book.id !== uniqueId){
+            arr.push(book);;
         } 
-        arr.push(book);
    }
    return arr;
 }
 
 function removeAllBooks(){
-    while (myBooks.length === 0){
+    while(myBooks.length > 0){
         myBooks.pop();
     }
 }
 
-function updateCatalogue(uniqueID){
-    arr = RemoveDeletedBookFromArr(uniqueID);
+function updateCatalogue(uniqueId){
+    arr = RemoveDeletedBookFromArr(uniqueId);
+    console.log(arr);
     removeAllBooks();
     for (let i = 0; i < arr.length; i++){
         myBooks.push(arr[i]);
@@ -108,6 +111,3 @@ createBook("The song of ice and fire", "George martin", 999, " not read");
 enableDeleteBtnForBook();
 
 addBook();
-
-
-
