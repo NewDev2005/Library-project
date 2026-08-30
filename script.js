@@ -1,18 +1,25 @@
 const myBooks = [];
-function Book(title, author, pages, status){
+function Book(title, author, pages){
     if (!new.target) {
         throw Error("You must use the new operator");
     }
     this.title = title;
     this.author = author;
     this.pages = pages;
-    this.status = status;
+    this.status = "read";
     this.id = crypto.randomUUID();
     this.listed = false;
+    this.updateStatus = function(){
+        if (this.status === "read"){
+            this.status = "not read yet!";
+        } else {
+            this.status = "read";
+        }
+    };
 }
 
-function createBook(title, author, pages, status){
-    const book = new Book(title, author, pages, status);
+function createBook(title, author, pages){
+    const book = new Book(title, author, pages);
     myBooks.push(book);
     displayBook();
 }
@@ -25,19 +32,25 @@ function displayBook(){
         }
         const div = document.createElement("div");
         const deleteBtn = document.createElement("button");
+        const readToggleBtn = document.createElement("button");
+        readToggleBtn.innerHTML = book.status
         deleteBtn.innerHTML= "Delete";
+        readToggleBtn.setAttribute("id", "status-btn");
         deleteBtn.setAttribute("id", "remove-btn");
         deleteBtn.setAttribute("data-unique-id", book.id);
         deleteBtn.setAttribute("data-event-listener", "false");
+        readToggleBtn.setAttribute("data-unique-id", book.id);
+        readToggleBtn.setAttribute("data-event-listener", "notAdded");
         const titlePara = document.createElement("p");
-        const authorPara = document.createElement("p")
-        const pagesPara = document.createElement("p")
+        const authorPara = document.createElement("p");
+        const pagesPara = document.createElement("p");
         div.setAttribute("class", "book");
         container.appendChild(div);
         div.appendChild(titlePara);
         div.appendChild(authorPara);
         div.appendChild(pagesPara);
         div.appendChild(deleteBtn);
+        div.appendChild(readToggleBtn);
         titlePara.innerHTML = "<b>Title</b>: " + `${book.title}`;
         authorPara.innerHTML = "<b>Author</b>: " + `${book.author}`;
         pagesPara.innerHTML = "<b>Pages</b>: " + `${book.pages}`;
@@ -57,7 +70,8 @@ function addBook(){
         e.preventDefault();
         createBook(title.value, author.value, pages.value);
         enableDeleteBtnForBook();
-        dialog.close()
+        toggleReadStatus();
+        dialog.close();
     });
 }
 
@@ -78,6 +92,36 @@ function enableDeleteBtnForBook(){
         });
     }
    
+}
+
+function toggleReadStatus(){
+    const readBtns = document.querySelectorAll("#status-btn");
+    if (readBtns.length > 0){
+        readBtns.forEach((readBtn) => {
+            if (readBtn.dataset.eventListener === "notAdded"){
+                readBtn.addEventListener("click", () => {
+                    const book = getBook(readBtn.dataset.uniqueId);
+                    if (book.status === "read"){
+                        book.status = "not read yet!";
+                        readBtn.innerHTML = book.status;
+                    } else {
+                        book.status = "read";
+                        readBtn.innerHTML = book.status;
+                    }
+                });
+                readBtn.dataset.eventListener = "added";
+            }
+        });
+    }
+}
+
+
+function getBook(id){
+   for (let i = 0; i < myBooks.length; i++){
+    if (myBooks[i].id === id){
+        return myBooks[i];
+    }
+   }
 }
 
 function RemoveDeletedBookFromArr(uniqueId){
@@ -106,8 +150,9 @@ function updateCatalogue(uniqueId){
     }
 }
 
-createBook("The ignited minds", "APJ abdul kalam", 259, "read");
-createBook("The song of ice and fire", "George martin", 999, " not read");
+createBook("Rails for Dummies", "Ser DHH", 300);
+createBook("Bjorn the ironside", "Odin-All-father", 69);
 enableDeleteBtnForBook();
+toggleReadStatus();
 
 addBook();
